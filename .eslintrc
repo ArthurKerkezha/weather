@@ -41,6 +41,7 @@
     "react/prop-types": "off",
     "complexity": [2, 42],
     "no-useless-call": 2,
+    "import/no-unresolved":0,
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx",".ts",".tsx"] }],
     // VARIABLES
     "no-unused-vars": [

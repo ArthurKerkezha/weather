@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Input } from "antd";
-import cx from "classnames";
 import { LoadingOutlined } from "@ant-design/icons";
+import { cx } from "@emotion/css";
 
 import styles from "./BaseInput.module.less";
 

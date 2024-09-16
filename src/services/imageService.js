@@ -16,7 +16,6 @@ class ImagesService {
 
     const { data } = await axios.post(IMAGE_API_URL, body, config);
 
-    console.log(data);
     return data.images;
   }
 }

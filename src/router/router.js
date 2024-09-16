@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import App from "../App";
 import { ErrorPage } from "../pages";
-import { Place } from "../components";
+import { PlaceInfo } from "../components";
 
 export const router = createBrowserRouter([
   {
@@ -12,7 +12,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "place/:placeId",
-        element: <Place />,
+        element: <PlaceInfo />,
       },
     ],
   },

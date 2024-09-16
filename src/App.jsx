@@ -1,116 +1,35 @@
-import React, { useState } from "react";
-import { Button, Dropdown } from "antd";
-import { isEmpty } from "lodash";
-import { Link, Outlet } from "react-router-dom";
+import React, { useCallback, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 
-import { SmileOutlined } from "@ant-design/icons";
-import { BaseInput } from "./shared/components";
-import { ImageService, WeatherService } from "./services";
+import { ContentSection, SearchSection, SwiperCarousel } from "./components";
+import { cityWeatherStore, unitSwitchStore } from "./store";
 import "./styles/app.less";
-import { UnitsSwitch } from "./components";
 
 const App = () => {
-  const [value, setValue] = useState("");
-  const [info, setInfo] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const { cityImages, isLoading, getInitialCityFullInfo } = cityWeatherStore();
 
-  const onChange = (e) => {
-    const targetValue = e.target.value;
+  const onSearchCityImage = useCallback(async () => {
+    await getInitialCityFullInfo();
+  }, [getInitialCityFullInfo]);
 
-    setValue(targetValue);
+  useEffect(() => {
+    onSearchCityImage();
+  }, [onSearchCityImage]);
 
-    if (targetValue.length < 3) return;
+  if (isLoading) {
+    return (
+      <h2 style={{ position: "absolute", top: "50%", left: "50%" }}>
+        Loading...
+      </h2>
+    );
+  }
 
-    setTimeout(async () => {
-      const response = await WeatherService.getCitiesAndWeatherData(
-        e.target.value,
-      );
-
-      if (response.list.length > 1) {
-        setIsOpen(true);
-      }
-      console.log(response);
-    });
-  };
-
-  const onClick = async () => {
-    const images = await ImageService.getPlaceImage(value);
-
-    console.log(images);
-    setInfo(images);
-  };
-  const items = [
-    {
-      key: "1",
-      label: (
-        <Link to="place/1">
-          <div>{1}</div>
-        </Link>
-      ),
-      // // eslint-disable-next-line react/no-unstable-nested-components
-      onClick: ({ item, key, keyPath, selectedKeys, domEvent }) => {
-        console.log("hello");
-        setIsOpen(false);
-      },
-    },
-    {
-      key: "2",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.aliyun.com"
-        >
-          2nd menu item (disabled)
-        </a>
-      ),
-      icon: <SmileOutlined />,
-      disabled: true,
-    },
-    {
-      key: "3",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.luohanacademy.com"
-        >
-          3rd menu item (disabled)
-        </a>
-      ),
-      disabled: true,
-    },
-    {
-      key: "4",
-      danger: true,
-      label: "a danger item",
-    },
-  ];
-
-  console.log(info);
   return (
-    <div>
-      <div className="d-f ai-c">
-        <Dropdown
-          open={isOpen}
-          menu={{
-            items,
-          }}
-        >
-          <BaseInput
-            className="w-100"
-            placeholder="Enter something"
-            value={value}
-            onChange={onChange}
-          />
-        </Dropdown>
-        <UnitsSwitch />
-      </div>
-
-      <Button onClick={onClick}> Call city info</Button>
-
-      {!isEmpty(info) &&
-        info.map((image) => <img src={image.imageUrl} alt={image.title} />)}
+    <div className="pos-r">
+      <SwiperCarousel images={cityImages}>
+        <SearchSection />
+      </SwiperCarousel>
+      <ContentSection />
       <div>
         <Outlet />
       </div>
