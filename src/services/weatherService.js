@@ -1,53 +1,30 @@
-import axios from "axios";
-
 import {
-  WEATHER_CITY_DATA_API_URL,
-  WEATHER_CURRENT_DATA,
-  WEATHER_DIRECT_API_URL,
+  WEATHER_CITIES_LIST_DATA_API_URL,
+  WEATHER_CURRENT_CITY_DATA,
 } from "../constants";
-
-const defaultDirectResponseLimit = 5;
-const defaultUnits = "metric";
-const defaultExcludes = [].join(",");
+import { UnitsEnum } from "../enums";
+import { weatherInstance } from "../api";
 
 class WeatherService {
-  async getDirectGeocoding(query, limit = defaultDirectResponseLimit) {
-    const { data } = await axios.get(WEATHER_DIRECT_API_URL, {
-      params: {
-        q: query,
-        limit,
-        appid: process.env.REACT_APP_OPEN_WEATHER_API,
+  async getCitiesListWithWeatherData(query, units = UnitsEnum.Metric) {
+    const { data } = await weatherInstance.get(
+      WEATHER_CITIES_LIST_DATA_API_URL,
+      {
+        params: {
+          q: query,
+          units,
+          appid: process.env.REACT_APP_OPEN_WEATHER_API,
+        },
       },
-    });
-
-    console.log(data);
-    return data;
-  }
-
-  async getCitiesAndWeatherData(query, units = defaultUnits) {
-    const { data } = await axios.get(WEATHER_CITY_DATA_API_URL, {
-      params: {
-        q: query,
-        units,
-        appid: process.env.REACT_APP_OPEN_WEATHER_API,
-      },
-    });
+    );
 
     return data;
   }
 
-  async getCurrenWeatherData({
-    lat,
-    lon,
-    excludes = defaultExcludes,
-    units = defaultUnits,
-  }) {
-    const { data } = await axios.get(WEATHER_CURRENT_DATA, {
+  async getCityWeatherData(params) {
+    const { data } = await weatherInstance.get(WEATHER_CURRENT_CITY_DATA, {
       params: {
-        lat,
-        lon,
-        exclude: excludes,
-        units,
+        ...params,
         appid: process.env.REACT_APP_OPEN_WEATHER_API,
       },
     });

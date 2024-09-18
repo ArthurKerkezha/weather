@@ -1,1 +1,3 @@
-export { default as BaseInput } from "./BaseInput";
+import BaseInput from "./BaseInput";
+
+export default BaseInput;

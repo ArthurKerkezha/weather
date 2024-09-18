@@ -1,26 +1,38 @@
 import React, { useCallback, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 
-import { ContentSection, SearchSection, SwiperCarousel } from "./components";
-import { cityWeatherStore, unitSwitchStore } from "./store";
+import { SearchSection, SwiperCarousel } from "./components";
+import { cityWeatherStore } from "./store";
+import { Loader } from "./shared/components";
 import "./styles/app.less";
+import useLoading from "./hooks/useLoading";
+
+const defaultCity = "New York";
 
 const App = () => {
-  const { cityImages, isLoading, getInitialCityFullInfo } = cityWeatherStore();
+  const { placeId } = useParams();
 
-  const onSearchCityImage = useCallback(async () => {
-    await getInitialCityFullInfo();
-  }, [getInitialCityFullInfo]);
+  const { cityImages, loadInitialCityInfo } = cityWeatherStore();
+  const [loadInitialInfo, isLoading] = useLoading(loadInitialCityInfo);
+
+  const onLoadCityInfo = useCallback(
+    async (query) => {
+      await loadInitialInfo(query);
+    },
+    [loadInitialInfo],
+  );
 
   useEffect(() => {
-    onSearchCityImage();
-  }, [onSearchCityImage]);
+    if (placeId) return;
+
+    onLoadCityInfo(defaultCity);
+  }, [placeId, onLoadCityInfo]);
 
   if (isLoading) {
     return (
-      <h2 style={{ position: "absolute", top: "50%", left: "50%" }}>
-        Loading...
-      </h2>
+      <div style={{ position: "absolute", left: "50%", top: "50%" }}>
+        <Loader />
+      </div>
     );
   }
 
@@ -29,7 +41,6 @@ const App = () => {
       <SwiperCarousel images={cityImages}>
         <SearchSection />
       </SwiperCarousel>
-      <ContentSection />
       <div>
         <Outlet />
       </div>

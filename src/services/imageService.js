@@ -1,12 +1,4 @@
-import axios from "axios";
-import { IMAGE_API_URL } from "../constants";
-
-const config = {
-  headers: {
-    "Content-Type": "application/json",
-    "X-API-KEY": process.env.REACT_APP_SERPER_PLACES_API,
-  },
-};
+import { imagesInstance } from "../api";
 
 class ImagesService {
   async getPlaceImage(query) {
@@ -14,7 +6,7 @@ class ImagesService {
       q: query,
     });
 
-    const { data } = await axios.post(IMAGE_API_URL, body, config);
+    const { data } = await imagesInstance.post("images", body);
 
     return data.images;
   }

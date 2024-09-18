@@ -6,7 +6,7 @@ import { userLocationStore } from "../../store";
 
 const UserLocation = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { userLocation, setUserLocation } = userLocationStore((state) => state);
+  const { setUserLocation } = userLocationStore((state) => state);
 
   const onClick = (e) => {
     e.stopPropagation();

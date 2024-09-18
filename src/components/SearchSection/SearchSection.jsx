@@ -1,57 +1,75 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Col, Dropdown, Row } from "antd";
 import { Link } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
+import { debounce, isEmpty } from "lodash";
 
 import { BaseInput } from "../../shared/components";
-import { WeatherService } from "../../services";
 import UnitsSwitch from "../UnitsSwitch";
 import UserLocation from "../UserLocation";
+import { cityWeatherStore } from "../../store";
+import useLoading from "../../hooks/useLoading";
 import styles from "./SearchSection.module.less";
 
 const SearchSection = () => {
-  const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const { citiesList, getCitiesByQuery, clearCitiesList } = cityWeatherStore();
+  const [getCities, isLoading] = useLoading(getCitiesByQuery);
 
-  const onChange = async (e) => {
-    const targetValue = e.target.value;
+  const debouncedSearchRequest = useRef(
+    debounce(async (query) => {
+      await getCities(query);
+    }, 3000),
+  ).current;
 
-    setInputValue(targetValue);
+  useEffect(
+    () => () => debouncedSearchRequest.cancel(),
+    [debouncedSearchRequest],
+  );
 
-    if (targetValue.length < 3) {
-      if (isOpen) {
-        setIsOpen(false);
-      }
+  useEffect(() => {
+    if (isEmpty(citiesList)) {
+      setIsOpen(false);
+    } else {
+      setIsOpen(true);
+    }
+  }, [citiesList]);
+
+  const onChange = (e) => {
+    const { value } = e.target;
+
+    setInputValue(value);
+
+    if (value.length < 3 || !value) {
+      clearCitiesList();
       return;
     }
 
-    const response = await WeatherService.getCitiesAndWeatherData(
-      e.target.value,
-    );
-
-    if (response.list.length > 1) {
-      setIsOpen(true);
-    }
+    debouncedSearchRequest(value);
   };
 
-  const items = [
-    {
-      key: "1",
+  const items = citiesList.map((city) => {
+    const country = city.sys?.country;
+
+    return {
+      key: city.id,
       label: (
-        <Link to="place/1">
-          <div>{1}</div>
+        <Link to={`place/${city.id}`}>
+          <div className="d-f ai-c">
+            <span>{city.name}</span>,<span className="m-l-5">{country}</span>
+            <div className="m-l-5">
+              <img
+                src={`https://openweathermap.org/images/flags/${country.toLowerCase()}.png`}
+                alt={country}
+              />
+            </div>
+          </div>
         </Link>
       ),
-      onClick: () => {
-        setIsOpen(false);
-      },
-    },
-    {
-      key: "4",
-      danger: true,
-      label: "a danger item",
-    },
-  ];
+      onClick: () => setIsOpen(false),
+    };
+  });
 
   return (
     <Row
@@ -63,19 +81,21 @@ const SearchSection = () => {
       <Col xs={22} sm={22} md={14} lg={14}>
         <Dropdown
           open={isOpen}
-          placement="bottomLeft"
           menu={{
             items,
           }}
         >
-          <BaseInput
-            className="w-100"
-            placeholder="Search"
-            value={inputValue}
-            prefix={<SearchOutlined />}
-            suffix={<UserLocation />}
-            onChange={onChange}
-          />
+          <div>
+            <BaseInput
+              className="w-100"
+              placeholder="Search"
+              value={inputValue}
+              prefix={<SearchOutlined />}
+              suffix={<UserLocation />}
+              loading={isLoading}
+              onChange={onChange}
+            />
+          </div>
         </Dropdown>
       </Col>
       <Col xs={22} sm={22} md={6} lg={6}>

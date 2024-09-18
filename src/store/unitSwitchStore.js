@@ -6,11 +6,11 @@ import { UnitsEnum } from "../enums";
 export const unitSwitchStore = create()(
   devtools(
     immer((set) => ({
-      unit: UnitsEnum.Metric,
-      setUnit: (unit) => {
+      units: UnitsEnum.Metric,
+      setUnits: (units) => {
         set(
           (state) => {
-            state.unit = unit;
+            state.units = units;
           },
           undefined,
           "unitSwitchStore/setUnit",
