@@ -7,6 +7,7 @@ import axios from "axios";
 import { ImageService, WeatherService } from "../services";
 import { filteredCityImages } from "../shared/utils";
 import { unitSwitchStore } from "./unitSwitchStore";
+import { CITY_WEATHER_KEY } from "../constants";
 
 export const cityWeatherStore = create()(
   devtools(
@@ -52,6 +53,8 @@ export const cityWeatherStore = create()(
             ...params,
             units,
           });
+
+          localStorage.setItem(CITY_WEATHER_KEY, cityWeather.name);
 
           const placeImages = await ImageService.getPlaceImage(
             cityWeather.name,

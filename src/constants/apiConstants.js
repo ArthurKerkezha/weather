@@ -1,4 +1,4 @@
-// export const IMAGE_API_URL = "https://google.serper.dev/images";
+export const IMAGE_URL = "images";
 
 export const WEATHER_CURRENT_CITY_DATA = "data/2.5/weather?";
 

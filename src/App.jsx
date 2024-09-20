@@ -6,9 +6,8 @@ import { cityWeatherStore } from "./store";
 import { Loader } from "./shared/components";
 import useLoading from "./hooks/useLoading";
 import ContentSection from "./components/ContentSection";
+import { CITY_WEATHER_KEY, DEFAULT_CITY } from "./constants";
 import "./styles/app.less";
-
-const defaultCity = "New York";
 
 const App = () => {
   const { placeId } = useParams();
@@ -25,7 +24,7 @@ const App = () => {
   useEffect(() => {
     if (placeId) return;
 
-    onLoadCityInfo(defaultCity);
+    onLoadCityInfo(localStorage.getItem(CITY_WEATHER_KEY) || DEFAULT_CITY);
   }, [placeId, onLoadCityInfo]);
 
   if (isLoading) {

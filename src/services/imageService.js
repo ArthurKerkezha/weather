@@ -1,4 +1,5 @@
 import { imagesInstance } from "../api";
+import { IMAGE_URL } from "../constants";
 
 class ImagesService {
   async getPlaceImage(query) {
@@ -6,7 +7,7 @@ class ImagesService {
       q: query,
     });
 
-    const { data } = await imagesInstance.post("images", body);
+    const { data } = await imagesInstance.post(IMAGE_URL, body);
 
     return data.images;
   }
