@@ -14,13 +14,13 @@ import styles from "./SearchSection.module.less";
 const SearchSection = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const { citiesList, getCitiesByQuery, clearCitiesList } = cityWeatherStore();
+  const { citiesList, getCitiesByQuery } = cityWeatherStore();
   const [getCities, isLoading] = useLoading(getCitiesByQuery);
 
   const debouncedSearchRequest = useRef(
     debounce(async (query) => {
       await getCities(query);
-    }, 3000),
+    }, 350),
   ).current;
 
   useEffect(
@@ -41,8 +41,7 @@ const SearchSection = () => {
 
     setInputValue(value);
 
-    if (value.length < 3 || !value) {
-      clearCitiesList();
+    if (value.length <= 3 || !value) {
       return;
     }
 
@@ -73,7 +72,7 @@ const SearchSection = () => {
 
   return (
     <Row
-      gutter={[12, 12]}
+      gutter={[15, 15]}
       align="middle"
       justify="center"
       className={styles.search}

@@ -19,8 +19,8 @@ const UnitsSwitch = () => {
   }));
 
   const onChange = async (value) => {
-    console.log("units", value);
     setUnits(value);
+
     await getCityFullInfo(params);
   };
 

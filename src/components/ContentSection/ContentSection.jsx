@@ -1,38 +1,64 @@
 import React from "react";
-import { Collapse } from "antd";
+import { Card, Col, Image, Row } from "antd";
 
 import { cityWeatherStore, unitSwitchStore } from "../../store";
-import styles from "./ContentSection.module.less";
 import { UnitsEnum } from "../../enums";
+import { parsedInt } from "../../shared/utils";
+import styles from "./ContentSection.module.less";
+import { Loader } from "../../shared/components";
 
 const ContentSection = () => {
-  const { cityWeather } = cityWeatherStore();
+  const { isLoading, cityWeather } = cityWeatherStore();
   const { units } = unitSwitchStore();
 
-  if (!cityWeather) {
-    return null;
-  }
+  const unit = units === UnitsEnum.Metric ? "°C" : "°F";
+  const wind = units === UnitsEnum.Metric ? "m/s" : "mph";
+
+  if (!cityWeather) return null;
 
   return (
     <div className={styles.content}>
-      <div className={styles.contentBox}>
-        <div className={styles.contentBoxText}>
-          <Collapse
-            items={[
-              {
-                key: "1",
-                label: cityWeather.name,
-                children: (
-                  <div style={{ background: "transparent" }}>
-                    {parseInt(cityWeather.main.temp, 10)}{" "}
-                    <span>&deg;{units === UnitsEnum.Metric ? "C" : "F"}</span>
-                  </div>
-                ),
-              },
-            ]}
-          />
-        </div>
-      </div>
+      <Card
+        className={styles.contentCard}
+        bordered={false}
+        type="inner"
+        title={
+          <div className="d-f ai-c jc-sa">
+            <h2>{cityWeather.name}</h2>
+            <div>
+              {parsedInt(cityWeather.main.temp)} {unit}
+            </div>
+            <Image
+              preview={false}
+              src={`https://openweathermap.org/img/wn/${cityWeather?.weather[0].icon}@2x.png`}
+              alt={cityWeather?.weather[0].description}
+            />
+          </div>
+        }
+      >
+        {isLoading && <Loader />}
+
+        <Row gutter={[10, 10]} justify="space-around" align="middle">
+          <Col className="text-center" xs={24} sm={24} md={12}>
+            Feels Like: {parsedInt(cityWeather.main.feels_like)} {unit}
+          </Col>
+          <Col className="text-center" xs={24} sm={24} md={12}>
+            Wind Speed: {cityWeather.wind.speed} {wind}
+          </Col>
+          <Col className="text-center" xs={24} sm={24} md={12}>
+            Humidity: {cityWeather.main.humidity} %
+          </Col>
+          <Col className="text-center" xs={24} sm={24} md={12}>
+            Weather: {cityWeather.weather[0].description}
+          </Col>
+          <Col className="text-center" xs={24} sm={24} md={12}>
+            Cloudiness: {cityWeather.clouds.all} %
+          </Col>
+          <Col className="text-center" xs={24} sm={24} md={12}>
+            Pressure: {cityWeather.main.pressure} hPa
+          </Col>
+        </Row>
+      </Card>
     </div>
   );
 };

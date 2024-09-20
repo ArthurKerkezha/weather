@@ -1,3 +1,5 @@
+@import 'src/styles/base/variables.less';
+
 .content {
   width: 100%;
   position: absolute;
@@ -6,12 +8,11 @@
   flex-direction: column;
   align-items: center;
   z-index: 2;
-  &Box {
-    width: 60%;
-    padding: 50px;
-    background: rgba(218, 218, 218, 0.3);
-    &Text {
-
-    }
+  :global(.ant-card .ant-card-head){
+    border-color: @border-color;
+  }
+  &Card {
+    width: 80%;
+    background: rgba(218, 218, 218, 0.85);
   }
 }

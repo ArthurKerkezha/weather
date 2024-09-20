@@ -1,27 +1,26 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import ContentSection from "../ContentSection";
 import { cityWeatherStore } from "../../store";
-import useLoading from "../../hooks/useLoading";
-import { Loader } from "../../shared/components";
+import styles from "./PlaceInfo.module.less";
 
 const PlaceInfo = () => {
   const { placeId } = useParams();
-  const { getCityFullInfo } = cityWeatherStore();
-  const [loadCityFullInfo, isLoading] = useLoading(getCityFullInfo);
+  const { getCityFullInfo, cityWeather } = cityWeatherStore();
 
   useEffect(() => {
-    console.log("effect PlaceInfo");
+    getCityFullInfo({ id: placeId });
+  }, [placeId, getCityFullInfo]);
 
-    loadCityFullInfo({ id: placeId });
-  }, [placeId, loadCityFullInfo]);
-
-  if (isLoading) {
-    return <Loader />;
+  if (!cityWeather) {
+    return null;
   }
 
-  return <ContentSection />;
+  return (
+    <div className={styles.container}>
+      <h2>{cityWeather.name}</h2>
+    </div>
+  );
 };
 
 export default PlaceInfo;

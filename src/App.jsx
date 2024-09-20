@@ -4,14 +4,14 @@ import { Outlet, useParams } from "react-router-dom";
 import { SearchSection, SwiperCarousel } from "./components";
 import { cityWeatherStore } from "./store";
 import { Loader } from "./shared/components";
-import "./styles/app.less";
 import useLoading from "./hooks/useLoading";
+import ContentSection from "./components/ContentSection";
+import "./styles/app.less";
 
 const defaultCity = "New York";
 
 const App = () => {
   const { placeId } = useParams();
-
   const { cityImages, loadInitialCityInfo } = cityWeatherStore();
   const [loadInitialInfo, isLoading] = useLoading(loadInitialCityInfo);
 
@@ -30,8 +30,8 @@ const App = () => {
 
   if (isLoading) {
     return (
-      <div style={{ position: "absolute", left: "50%", top: "50%" }}>
-        <Loader />
+      <div className="loader">
+        <Loader fullscreen />
       </div>
     );
   }
@@ -41,6 +41,7 @@ const App = () => {
       <SwiperCarousel images={cityImages}>
         <SearchSection />
       </SwiperCarousel>
+      <ContentSection />
       <div>
         <Outlet />
       </div>

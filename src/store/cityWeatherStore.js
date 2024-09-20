@@ -10,30 +10,26 @@ import { unitSwitchStore } from "./unitSwitchStore";
 
 export const cityWeatherStore = create()(
   devtools(
-    immer((set) => ({
-      cityImages: [
-        "https://swiperjs.com/demos/images/nature-1.jpg",
-        "https://swiperjs.com/demos/images/nature-2.jpg",
-      ],
+    immer((set, getState) => ({
+      isLoading: false,
+      cityImages: [],
       cityWeather: null,
       citiesList: [],
       loadInitialCityInfo: async (query) => {
+        set({ initialLoading: true });
         const units = unitSwitchStore.getState().units;
 
         try {
-          const [
-            // placeImages,
-            cityWeather,
-          ] = await Promise.all([
-            // ImageService.getPlaceImage(query),
+          const [placeImages, cityWeather] = await Promise.all([
+            ImageService.getPlaceImage(query),
             WeatherService.getCityWeatherData({ q: query, units }),
           ]);
 
-          // const cityImages = await filteredCityImages(placeImages);
+          const cityImages = await filteredCityImages(placeImages);
 
           set(
             {
-              // cityImages,
+              cityImages,
               cityWeather,
             },
             undefined,
@@ -43,9 +39,12 @@ export const cityWeatherStore = create()(
           if (!axios.isCancel(e)) {
             notification.error({ message: e.message });
           }
+        } finally {
+          set({ initialLoading: false });
         }
       },
       getCityFullInfo: async (params = {}) => {
+        set({ isLoading: true });
         const units = unitSwitchStore.getState().units;
 
         try {
@@ -54,17 +53,14 @@ export const cityWeatherStore = create()(
             units,
           });
 
-          // const placeImages = await ImageService.getPlaceImage(
-          //   cityWeather.name,
-          // );
-          //
-          // const cityImages = await filteredCityImages(placeImages);
+          const placeImages = await ImageService.getPlaceImage(
+            cityWeather.name,
+          );
+
+          const cityImages = await filteredCityImages(placeImages);
 
           set(
-            {
-              // cityImages,
-              cityWeather,
-            },
+            { cityWeather, cityImages },
             undefined,
             "cityWeatherStore/getCityFullInfo",
           );
@@ -72,9 +68,17 @@ export const cityWeatherStore = create()(
           if (!axios.isCancel(e)) {
             notification.error({ message: e.message });
           }
+        } finally {
+          set({ isLoading: false });
         }
       },
       getCitiesByQuery: async (query) => {
+        if (query.length <= 3) {
+          set({ citiesList: [] });
+
+          return;
+        }
+
         const units = unitSwitchStore.getState().units;
 
         try {
@@ -91,15 +95,6 @@ export const cityWeatherStore = create()(
         } catch (e) {
           notification.error({ message: e.message });
         }
-      },
-      clearCitiesList: () => {
-        set(
-          (state) => {
-            state.citiesList = [];
-          },
-          undefined,
-          "cityWeatherStore/clearCitiesList",
-        );
       },
     })),
   ),

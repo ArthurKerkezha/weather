@@ -9,7 +9,6 @@ export const userLocationStore = create()(
       setUserLocation: (location) => {
         set(
           (state) => {
-            console.log(location);
             state.userLocation = location;
           },
           undefined,

@@ -2,27 +2,30 @@ import React, { useState } from "react";
 import { AimOutlined } from "@ant-design/icons";
 import { Button, notification } from "antd";
 
-import { userLocationStore } from "../../store";
+import { cityWeatherStore, userLocationStore } from "../../store";
 
 const UserLocation = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setUserLocation } = userLocationStore((state) => state);
+  const { setUserLocation } = userLocationStore();
+  const { getCityFullInfo } = cityWeatherStore();
 
   const onClick = (e) => {
     e.stopPropagation();
+
     if (navigator.geolocation) {
       setIsLoading(true);
 
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
 
           setUserLocation({ latitude, longitude });
+
+          await getCityFullInfo({ lat: latitude, lon: longitude });
+
           setIsLoading(false);
         },
         (error) => {
-          console.error("Error getting user location:", error);
-
           notification.error({
             message: `Error getting user location:, ${error}`,
           });
@@ -32,7 +35,6 @@ const UserLocation = () => {
       notification.error({
         message: "Geolocation is not supported by this browser.",
       });
-      console.error("Geolocation is not supported by this browser.");
     }
   };
 
