@@ -18,7 +18,9 @@ const PlaceInfo = () => {
 
   return (
     <div className={styles.container}>
-      <h2>{cityWeather.name}</h2>
+      <h2>
+        {cityWeather.name}, {cityWeather.sys.country}
+      </h2>
     </div>
   );
 };
