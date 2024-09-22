@@ -48,6 +48,8 @@ const SearchSection = () => {
     debouncedSearchRequest(value);
   };
 
+  const onClear = () => setInputValue("");
+
   const items = citiesList.map((city) => {
     const country = city.sys?.country;
 
@@ -90,7 +92,7 @@ const SearchSection = () => {
               placeholder="Search"
               value={inputValue}
               prefix={<SearchOutlined />}
-              suffix={<UserLocation />}
+              suffix={<UserLocation onClear={onClear} />}
               loading={isLoading}
               onChange={onChange}
             />

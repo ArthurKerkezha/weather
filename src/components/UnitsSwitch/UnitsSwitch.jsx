@@ -1,17 +1,13 @@
 import React from "react";
 import { Segmented } from "antd";
 
-import { useParams } from "react-router-dom";
 import { cityWeatherStore, unitSwitchStore } from "../../store";
 import { UnitLabelsEnum, UnitsEnum } from "../../enums";
 import styles from "./UnitsSwitch.module.less";
 
 const UnitsSwitch = () => {
-  const { placeId } = useParams();
   const { units: unitValue, setUnits } = unitSwitchStore();
   const { cityWeather, getCityFullInfo } = cityWeatherStore();
-
-  const params = placeId ? { id: placeId } : { q: cityWeather?.name };
 
   const options = Object.keys(UnitsEnum).map((unit) => ({
     label: UnitLabelsEnum[unit],
@@ -21,7 +17,7 @@ const UnitsSwitch = () => {
   const onChange = async (value) => {
     setUnits(value);
 
-    await getCityFullInfo(params);
+    await getCityFullInfo({ q: cityWeather?.name });
   };
 
   return (

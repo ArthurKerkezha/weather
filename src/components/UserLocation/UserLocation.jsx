@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import propTypes from "prop-types";
 import { AimOutlined } from "@ant-design/icons";
 import { Button, notification } from "antd";
 
 import { cityWeatherStore, userLocationStore } from "../../store";
 
-const UserLocation = () => {
+const UserLocation = ({ onClear }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { setUserLocation } = userLocationStore();
   const { getCityFullInfo } = cityWeatherStore();
@@ -23,6 +24,9 @@ const UserLocation = () => {
 
           await getCityFullInfo({ lat: latitude, lon: longitude });
 
+          if (onClear) {
+            onClear();
+          }
           setIsLoading(false);
         },
         (error) => {
@@ -48,4 +52,11 @@ const UserLocation = () => {
   );
 };
 
+UserLocation.propTypes = {
+  onClear: propTypes.func,
+};
+
+UserLocation.defaultProps = {
+  onClear: null,
+};
 export default UserLocation;
