@@ -4,8 +4,8 @@ import { Card, Col, Image, Row } from "antd";
 import { cityWeatherStore, unitSwitchStore } from "../../store";
 import { UnitsEnum } from "../../enums";
 import { parsedInt } from "../../shared/utils";
-import styles from "./ContentSection.module.less";
 import { Loader } from "../../shared/components";
+import styles from "./ContentSection.module.less";
 
 const ContentSection = () => {
   const { isLoading, cityWeather } = cityWeatherStore();

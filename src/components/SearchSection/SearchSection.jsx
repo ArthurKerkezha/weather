@@ -5,10 +5,10 @@ import { SearchOutlined } from "@ant-design/icons";
 import { debounce, isEmpty } from "lodash";
 
 import { BaseInput } from "../../shared/components";
-import UnitsSwitch from "../UnitsSwitch";
-import UserLocation from "../UserLocation";
 import { cityWeatherStore } from "../../store";
 import useLoading from "../../hooks/useLoading";
+import UnitsSwitch from "../UnitsSwitch";
+import UserLocation from "../UserLocation";
 import styles from "./SearchSection.module.less";
 
 const SearchSection = () => {
