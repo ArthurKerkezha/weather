@@ -1,3 +1,5 @@
+# https://weathercity-neon.vercel.app/
+
 # For images this app uses https://serper.dev/  
 need to sign up and add your API key to .env for const REACT_APP_PLACES_API
 
